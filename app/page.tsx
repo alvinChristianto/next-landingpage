@@ -31,21 +31,24 @@ const reviews = [
 export default function HomePage() {
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0)
   const [currentPage, setCurrentPage] = useState<"home" | "about" | "contact">('home');
+
+  const [isFading, setIsFading] = useState<boolean>(false);
+  const [prevImageIndex, setPrevImageIndex] = useState<number>(0);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [lastScrollY, setLastScrollY] = useState<number>(0);
-  const [prevImageIndex, setPrevImageIndex] = useState<number>(0);
-  const [isFading, setIsFading] = useState<boolean>(false);
+
 
 
   async function getHotelData() {
-    const result = await hotel();
-    console.log(result);
-    if (result.status === 200) {
+    const result: any = await hotel();
 
+    if (result && result.status === 200) {
+      console.log(result.data);
 
     } else {
       console.log("error");
     }
+
   }
 
   useEffect(() => {
