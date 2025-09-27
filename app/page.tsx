@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import SearchForm from './components/SearchForm'
 import RoomCard from './components/RoomCard'
-import { hotel } from "./API/APIhotel";
+import { hotel, room_hotel } from "./API/APIhotel";
 
 const images: string[] = [
   'https://plus.unsplash.com/premium_photo-1661964402307-02267d1423f5?q=80&w=1073&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -41,6 +41,19 @@ export default function HomePage() {
 
   async function getHotelData() {
     const result: any = await hotel();
+
+    if (result && result.status === 200) {
+      console.log(result.data);
+
+    } else {
+      console.log("error");
+    }
+
+  }
+
+  
+  async function getRoomTypeData() {
+    const result: any = await room_hotel();
 
     if (result && result.status === 200) {
       console.log(result.data);
@@ -94,6 +107,7 @@ export default function HomePage() {
 
   useEffect(() => {
     getHotelData();
+    getRoomTypeData();
   }, []);
 
   const heroImage: string = images[currentImageIndex]
