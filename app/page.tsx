@@ -31,6 +31,8 @@ const reviews = [
 export default function HomePage() {
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0)
   const [currentPage, setCurrentPage] = useState<"home" | "about" | "contact">('home');
+  const [hotelData, setHotelData] = useState<any>(Object);
+  const [roomTypeData, setRoomTypeData] = useState<any>(Array);
 
   const [isFading, setIsFading] = useState<boolean>(false);
   const [prevImageIndex, setPrevImageIndex] = useState<number>(0);
@@ -44,6 +46,7 @@ export default function HomePage() {
 
     if (result && result.status === 200) {
       console.log(result.data);
+      setHotelData(result.data);
 
     } else {
       console.log("error");
@@ -51,12 +54,13 @@ export default function HomePage() {
 
   }
 
-  
+
   async function getRoomTypeData() {
     const result: any = await room_hotel();
 
     if (result && result.status === 200) {
       console.log(result.data);
+      setRoomTypeData(result.data);
 
     } else {
       console.log("error");
@@ -140,42 +144,36 @@ export default function HomePage() {
       </section>
 
       {/* Search Form */}
-      <SearchForm isScrolled={isScrolled} />
-
+      {/* <SearchForm isScrolled={isScrolled} /> */}
+      {hotelData?.is_transaction_allowed ? (
+        <SearchForm isScrolled={isScrolled} />
+      ) : (
+        null
+      )}
       {/* Room Sections */}
-      <section id="deluxe-room" className="bg-white py-16 px-6 md:px-12">
+      <section id="room-types" className="py-20 px-6 md:px-12 bg-gray-100">
         <div className="container mx-auto">
-          <RoomCard
-            id="deluxe"
-            name="Kamar Deluxe"
-            image="https://plus.unsplash.com/premium_photo-1661964402307-02267d1423f5?q=80&w=1073&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            originalPrice={1500000}
-            discountedPrice={999000}
-            discount={30}
-            roomsLeft={3}
-            description="Nikmati kenyamanan dan kemewahan sejati di kamar deluxe kami. Dengan interior yang dirancang dengan cermat dan pemandangan kota yang memukau, setiap sudut kamar ini akan memanjakan Anda. Sempurna untuk bersantai setelah seharian beraktivitas."
-            amenities={['AC', 'TV LED', 'Mini Bar', 'Balkon Pribadi']}
-            reverse={false}
-          />
-        </div>
-      </section>
+          <h2 className="text-4xl font-extrabold text-teal-700 mb-12 text-center">Pilihan Tipe Kamar Kami</h2>
 
-      <section id="standard-room" className="bg-gray-100 py-16 px-6 md:px-12">
-        <div className="container mx-auto">
-          <RoomCard
-            id="standard"
-            name="Kamar Standard"
-            image="https://plus.unsplash.com/premium_photo-1661902745118-a736d6956c03?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            originalPrice={800000}
-            discountedPrice={599000}
-            discount={25}
-            roomsLeft={5}
-            description="Kamar standard kami menawarkan kenyamanan fungsional dengan sentuhan modern. Dirancang untuk para traveler cerdas, kamar ini memiliki semua yang Anda butuhkan untuk istirahat yang nyaman dengan harga terbaik."
-            amenities={['AC', 'TV LED', 'Wi-Fi', 'Kamar Mandi Pribadi']}
-            reverse={true}
-          />
+          {roomTypeData.map((room, index) => (
+            <RoomCard
+              key={room.id}
+              id={room.id}
+              name={room.type_name}
+              image={room.image_room}
+              originalPrice={2000}
+              discountedPrice={1900}
+              discount={10}
+              roomsLeft={1}
+              description={room.description}
+              amenities={"AC, TV LED, Wi-Fi, Kamar Mandi Pribadi".split(", ")}
+              reverse={index % 2 !== 0} // Mengganti layout setiap item
+            />
+          ))}
+
         </div>
       </section>
+      
 
       {/* Features Section */}
       <section id="features" className="bg-gray-100 py-16 px-6 md:px-12">
