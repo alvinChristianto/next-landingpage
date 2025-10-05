@@ -38,6 +38,10 @@ export default function HomePage() {
   const [prevImageIndex, setPrevImageIndex] = useState<number>(0);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [lastScrollY, setLastScrollY] = useState<number>(0);
+  
+    // STATE BARU UNTUK CROSS-FADE
+    const [oldImageIndex, setOldImageIndex] = useState(0);
+    const [nextImageIndex, setNextImageIndex] = useState(1);
 
 
 
@@ -114,32 +118,96 @@ export default function HomePage() {
     getRoomTypeData();
   }, []);
 
+  useEffect(() => {
+        if (images.length < 2) return; // Tidak perlu transisi jika kurang dari 2 gambar
+
+        const transitionDuration = 1000; // 1 detik transisi
+        const displayDuration = 4000;   // 4 detik gambar stabil
+        
+        const heroInterval = setInterval(() => {
+            // 1. Mulai fade-in gambar berikutnya (Lapisan Atas)
+            setIsFading(true); 
+            
+            // 2. Setelah durasi transisi, update indeks dan reset trigger
+            setTimeout(() => {
+                const newOldIndex = nextImageIndex;
+                const newNextIndex = (newOldIndex + 1) % images.length;
+
+                setOldImageIndex(newOldIndex); // Gambar baru menjadi gambar lama
+                setNextImageIndex(newNextIndex); // Tentukan gambar berikutnya
+                setIsFading(false); // Reset opacity Lapisan Atas ke 0 untuk transisi selanjutnya
+            }, transitionDuration); 
+            
+        }, displayDuration + transitionDuration); // Total siklus = 5 detik
+
+        // Logika Navbar Scroll
+        const handleScroll = () => {
+            if (typeof window !== 'undefined') {
+                const currentScrollY = window.scrollY;
+
+                // Navbar Hide/Show
+                if (currentScrollY > 100 && currentScrollY > lastScrollY) {
+                    setIsScrolled(true); // Sembunyikan
+                } else if (currentScrollY < lastScrollY || currentScrollY < 100) {
+                    setIsScrolled(false); // Tampilkan
+                }
+
+                setLastScrollY(currentScrollY);
+            }
+        };
+
+        if (typeof window !== 'undefined') {
+            window.addEventListener('scroll', handleScroll);
+        }
+
+        return () => {
+            clearInterval(heroInterval);
+            if (typeof window !== 'undefined') {
+                window.removeEventListener('scroll', handleScroll);
+            }
+        };
+    }, [oldImageIndex, nextImageIndex, images.length]); // Dependencies memastikan logika berjalan lancar
+
+
   const heroImage: string = images[currentImageIndex]
 
   return (
     <>
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center text-center overflow-hidden">
+      <section id="hero-section" className="relative h-[80vh] min-h-[500px] flex items-center justify-center overflow-hidden">
+        {/* Gambar Latar Belakang (Transisi Cross-Fade MULUS) */}
         <div className="absolute inset-0">
-          <div
-            className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out"
-            style={{ backgroundImage: `url(${prevImageIndex})`, opacity: isFading ? 0 : 1 }}
-          ></div>
-          <div
-            className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out"
-            style={{ backgroundImage: `url(${heroImage})`, opacity: isFading ? 1 : 0 }}
-          ></div>
-          {/* Lapisan overlay untuk meningkatkan keterbacaan teks */}
-          <div className="absolute inset-0 bg-slate-700 opacity-50"></div>
+          {/* Gambar Lama (Lapisan Bawah, selalu opacity 1, ini memastikan layar tidak gelap) */}
+          <img
+            src={images[oldImageIndex]}
+            alt="Hotel View Old"
+            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+          />
+          {/* Gambar Baru (Lapisan Atas, transisi opacity 0 -> 1) */}
+          <img
+            src={images[nextImageIndex]}
+            alt="Hotel View New"
+            // Ketika isFading=TRUE, opacity=1 (fading in). Ketika isFading=FALSE, opacity=0 (invisible, ready for next transition)
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${isFading ? 'opacity-100' : 'opacity-0'}`}
+          />
+          {/* Overlay Hitam untuk Keterbacaan Teks */}
+          <div className="absolute inset-0 bg-black opacity-50"></div>
         </div>
-        <div className="relative z-10 text-white px-6">
-          <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-4">Rasakan Liburan Tak Terlupakan</h1>
-          <p className="text-lg md:text-xl font-light mb-8 max-w-2xl mx-auto">
-            Hotel Hebat, tempat Anda menemukan ketenangan dan kenyamanan sejati.
+
+        {/* Konten Hero */}
+        <div className="relative z-10 text-center px-6">
+          <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-4 drop-shadow-lg">
+            {hotelData?.name || "Hotel Hebat"}
+          </h1>
+          <p className="text-xl md:text-2xl text-white mb-10 drop-shadow-md font-medium">
+            {hotelData?.tagline || "Kenyamanan dan Kemewahan di Jantung Kota"}
           </p>
-          <a href="#main-search" className="bg-teal-700 text-white px-8 py-3 rounded-full font-semibold text-lg hover:bg-teal-800 transition-colors transform hover:scale-105">
-            Lihat Kamar & Harga
-          </a>
+
+          {/* Search Form component */}
+
+          {/* <SearchForm isScrolled={isScrolled} /> */}
+
+
         </div>
       </section>
 
@@ -173,7 +241,7 @@ export default function HomePage() {
 
         </div>
       </section>
-      
+
 
       {/* Features Section */}
       <section id="features" className="bg-gray-100 py-16 px-6 md:px-12">
