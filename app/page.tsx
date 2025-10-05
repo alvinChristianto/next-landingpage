@@ -223,7 +223,7 @@ export default function HomePage() {
         <div className="container mx-auto">
           <h2 className="text-4xl font-extrabold text-teal-700 mb-12 text-center">Pilihan Tipe Kamar Kami</h2>
 
-          {roomTypeData.map((room, index) => (
+          {roomTypeData.map((room:any, index:any) => (
             <RoomCard
               key={room.id}
               id={room.id}
