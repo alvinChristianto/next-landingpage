@@ -13,7 +13,7 @@ async function hotel() {
     let headers = {
         //  'Content-Type': 'application/json',
         Accept: "application/json",
-        Authorization_hotel: HOTEL_SECRET,
+        "Authorization-hotel": HOTEL_SECRET,
         // 'Access-Control-Allow-Methods': "POST, PUT, PATCH, GET, DELETE, OPTIONS",
         "Access-Control-Allow-Origin": "*",
         // 'Access-Control-Allow-Headers': "Origin, X-Api-Key, X-Requested-With, Content-Type, Accept, Authorization",
@@ -44,13 +44,13 @@ async function room_hotel() {
     let headers = {
         //  'Content-Type': 'application/json',
         Accept: "application/json",
-        Authorization_hotel: "test12345",
+        "Authorization-hotel": HOTEL_SECRET,
         // 'Access-Control-Allow-Methods': "POST, PUT, PATCH, GET, DELETE, OPTIONS",
         "Access-Control-Allow-Origin": "*",
         // 'Access-Control-Allow-Headers': "Origin, X-Api-Key, X-Requested-With, Content-Type, Accept, Authorization",
     };
 
-    await Axios.get(BE_URL + VERS + 'room_type', {
+    await Axios.get(BE_URL + VERS +  'room_type', {
         headers,
         withCredentials: true,
     })
