@@ -12,6 +12,8 @@ interface RoomCardProps {
     reverse: boolean;
 }
 
+const BE_STORAGE_URL = process.env.NEXT_PUBLIC_IMAGE_STORAGE_ROUTE;
+
 export default function RoomCard({
     id, name, image, originalPrice, discountedPrice, discount, roomsLeft, description, amenities, reverse
 }: RoomCardProps) {
@@ -29,7 +31,7 @@ export default function RoomCard({
             <div className="md:w-1/2">
                 <div className="relative group overflow-hidden rounded-2xl shadow-xl transition-transform duration-500 hover:scale-[1.03]">
                     <img
-                        src={image}
+                        src={BE_STORAGE_URL + image[0]} //adding NEXT_PUBLIC_IMAGE_STORAGE_ROUTE from .env.local
                         alt={name}
                         className="w-full h-full object-cover aspect-video md:aspect-square"
                     />
