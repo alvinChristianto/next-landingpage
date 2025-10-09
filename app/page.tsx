@@ -200,7 +200,7 @@ export default function HomePage() {
             {hotelData?.name || "Hotel Hebat"}
           </h1>
           <p className="text-xl md:text-2xl text-white mb-10 drop-shadow-md font-medium">
-            {hotelData?.tagline || "Kenyamanan dan Kemewahan di Jantung Kota"}
+            {hotelData?.description || "Kenyamanan dan Kemewahan di Jantung Kota"}
           </p>
 
           {/* Search Form component */}

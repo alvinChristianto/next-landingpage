@@ -7,7 +7,7 @@ import Footer from './components/Footer'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Hotel Hebat - Pengalaman Menginap Tak Terlupakan',
+  title: 'Hotel Jaya Abadi - Pengalaman Menginap Tak Terlupakan',
   description: 'Hotel Hebat menawarkan kenyamanan dan kemewahan dengan fasilitas lengkap di jantung kota.',
 }
 

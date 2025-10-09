@@ -14,7 +14,7 @@ export default function Header() {
         <header className="fixed top-0 left-0 w-full z-50 bg-white bg-opacity-80 backdrop-blur-sm shadow-md py-4 px-6 md:px-12">
             <nav className="container mx-auto flex justify-between items-center">
                 <Link href="/" className="text-xl md:text-2xl font-bold text-teal-700 hover:text-teal-800 transition-colors">
-                    Hotel Hebat
+                    Hotel Jaya Abadi
                 </Link>
 
                 {/* Desktop Menu */}
@@ -25,8 +25,7 @@ export default function Header() {
                     >
                         Tentang Kami
                     </Link>
-                    <a href="/#deluxe-room" className="text-gray-600 hover:text-teal-700 transition-colors">Kamar Deluxe</a>
-                    <a href="/#standard-room" className="text-gray-600 hover:text-teal-700 transition-colors">Kamar Standard</a>
+                    <a href="/#room-types" className="text-gray-600 hover:text-teal-700 transition-colors">Pilihan Kamar</a>
                     <a href="/#features" className="text-gray-600 hover:text-teal-700 transition-colors">Fitur</a>
                     <Link
                         href="/contact"
@@ -36,7 +35,7 @@ export default function Header() {
                     </Link>
                 </div>
 
-                <a href="/#main-search" className="bg-teal-700 text-white px-5 py-2 rounded-full font-semibold hover:bg-teal-800 transition-colors hidden md:block">
+                <a href="/#room-types" className="bg-teal-700 text-white px-5 py-2 rounded-full font-semibold hover:bg-teal-800 transition-colors hidden md:block">
                     Pesan Sekarang
                 </a>
 
@@ -64,9 +63,8 @@ export default function Header() {
                         >
                             Tentang Kami
                         </Link>
-                        <a href="/#deluxe-room" className="block text-gray-600" onClick={() => setMobileMenuOpen(false)}>Kamar Deluxe</a>
-                        <a href="/#standard-room" className="block text-gray-600" onClick={() => setMobileMenuOpen(false)}>Kamar Standard</a>
-                        <a href="/#features" className="block text-gray-600" onClick={() => setMobileMenuOpen(false)}>Fitur</a>
+                        <a href="/#room-types" className="block text-gray-600" onClick={() => setMobileMenuOpen(false)}>Pilihan Kamar</a>
+                         <a href="/#features" className="block text-gray-600" onClick={() => setMobileMenuOpen(false)}>Fitur</a>
                         <Link
                             href="/contact"
                             className={`block transition-colors ${isActive('/contact') ? 'text-teal-700 font-semibold' : 'text-gray-600'}`}
