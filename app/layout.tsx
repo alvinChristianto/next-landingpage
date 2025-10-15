@@ -19,11 +19,11 @@ export const metadata: Metadata = {
     title: "Hotel Jaya Abadi",
     siteName: "Hotel Jaya Abadi",
     type: "website",
-    url: "https://plus.unsplash.com/premium_photo-1661964402307-02267d1423f5?q=80&w=1073&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    url: "https://hoteljaya.ezhotel.site/",
     description:
       "Hotel Jaya Abadi Menginap nyaman dan terjangkau untuk traveler dan keluarga di Jawa dan Bali",
     images:
-      "https://thecabinhotelgroup.com/_next/image?url=https%3A%2F%2Fbe-prod.thecabinhotelgroup.com%2Fstorage%2Fhotel-images%2F1702103927-_1.jpg&w=640&q=75",
+      "https://plus.unsplash.com/premium_photo-1661964402307-02267d1423f5?q=80&w=1073&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
 }
 
