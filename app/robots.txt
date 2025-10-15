@@ -1,0 +1,5 @@
+User-Agent: *
+Allow: /
+Disallow: /private/
+
+Sitemap: hoteljaya.ezhotel.site/sitemap.xml
