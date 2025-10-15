@@ -4,11 +4,25 @@ import { useState, useEffect } from 'react'
 import SearchForm from './components/SearchForm'
 import RoomCard from './components/RoomCard'
 import { hotel, room_hotel } from "./API/APIhotel";
+import Image from 'next/image';
+
+interface HotelData {
+  name: string;
+  description: string;
+}
+
+// Props untuk Hero Section Component
+interface HeroSectionProps {
+  hotelData?: HotelData;
+  images: string[];
+  intervalDuration?: number; // dalam milliseconds, default 5000ms (5 detik)
+}
+
 
 const images: string[] = [
   'https://plus.unsplash.com/premium_photo-1661964402307-02267d1423f5?q=80&w=1073&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   'https://plus.unsplash.com/premium_photo-1661876290667-0612447870d5?q=80&w=963&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  'https://plus.unsplash.com/premium_photo-1661876290667-0612447870d5?q=80&w=963&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=870',
 ]
 
 const features = [
@@ -28,29 +42,43 @@ const reviews = [
   { text: "Fasilitasnya lengkap, terutama kolam renangnya. Sangat cocok untuk liburan keluarga.", author: "Budi Santoso", rating: 4 }
 ]
 
+function LoadingSkeleton() {
+  return (
+    <section className="relative h-[80vh] min-h-[500px] flex items-center justify-center overflow-hidden bg-gray-200 animate-pulse">
+      <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
+        <div className="h-16 bg-gray-300 rounded-lg mb-4 w-3/4 mx-auto"></div>
+        <div className="h-8 bg-gray-300 rounded-lg w-1/2 mx-auto"></div>
+      </div>
+    </section>
+  );
+}
+
+
 export default function HomePage() {
-  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0)
   const [currentPage, setCurrentPage] = useState<"home" | "about" | "contact">('home');
   const [hotelData, setHotelData] = useState<any>(Object);
   const [roomTypeData, setRoomTypeData] = useState<any>(Array);
 
-  const [isFading, setIsFading] = useState<boolean>(false);
   const [prevImageIndex, setPrevImageIndex] = useState<number>(0);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [lastScrollY, setLastScrollY] = useState<number>(0);
-  
-    // STATE BARU UNTUK CROSS-FADE
-    const [oldImageIndex, setOldImageIndex] = useState(0);
-    const [nextImageIndex, setNextImageIndex] = useState(1);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  // STATE BARU UNTUK CROSS-FADE
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+  const [isFading, setIsFading] = useState<boolean>(false);
 
 
 
   async function getHotelData() {
+    setIsLoading(true);
     const result: any = await hotel();
 
     if (result && result.status === 200) {
       console.log(result.data);
       setHotelData(result.data);
+
+      setIsLoading(false);
 
     } else {
       console.log("error");
@@ -73,103 +101,36 @@ export default function HomePage() {
   }
 
   useEffect(() => {
-
-
-    const heroInterval = setInterval(() => {
-      setIsFading(true); // Mulai transisi
-      const nextIndex = (currentImageIndex + 1) % images.length;
-
-      // Tunggu transisi selesai sebelum mengganti gambar di bawahnya
-      setTimeout(() => {
-        setPrevImageIndex(currentImageIndex);
-        setCurrentImageIndex(nextIndex);
-        setIsFading(false); // Reset untuk transisi berikutnya
-      }, 1000); // Sesuai dengan durasi transisi
-
-    }, 5000);
-
-    const handleScroll = () => {
-      if (typeof window !== 'undefined') {
-        if (window.scrollY > lastScrollY) {
-          // Gulir ke bawah
-          setIsScrolled(true);
-        } else {
-          // Gulir ke atas
-          setIsScrolled(false);
-        }
-        setLastScrollY(window.scrollY);
-      }
-    };
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('scroll', handleScroll);
+    // Validasi: pastikan ada minimal 2 gambar
+    if (images.length < 2) {
+      console.warn('HeroSection membutuhkan minimal 2 gambar untuk transisi');
+      return;
     }
 
-    return () => {
-      clearInterval(heroInterval);
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('scroll', handleScroll);
-      }
-    };
-  }, [currentImageIndex, lastScrollY, isFading]);
+    const interval = setInterval(() => {
+      // Mulai transisi fade-out
+      setIsFading(true);
+
+      // Tunggu transisi selesai, kemudian ganti gambar dan fade-in
+      setTimeout(() => {
+        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+        setIsFading(false);
+      }, 200); // Durasi harus sama dengan duration-1000 di className
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [images.length, 5000]);
+
 
   useEffect(() => {
     getHotelData();
     getRoomTypeData();
   }, []);
 
-  useEffect(() => {
-        if (images.length < 2) return; // Tidak perlu transisi jika kurang dari 2 gambar
-
-        const transitionDuration = 1000; // 1 detik transisi
-        const displayDuration = 4000;   // 4 detik gambar stabil
-        
-        const heroInterval = setInterval(() => {
-            // 1. Mulai fade-in gambar berikutnya (Lapisan Atas)
-            setIsFading(true); 
-            
-            // 2. Setelah durasi transisi, update indeks dan reset trigger
-            setTimeout(() => {
-                const newOldIndex = nextImageIndex;
-                const newNextIndex = (newOldIndex + 1) % images.length;
-
-                setOldImageIndex(newOldIndex); // Gambar baru menjadi gambar lama
-                setNextImageIndex(newNextIndex); // Tentukan gambar berikutnya
-                setIsFading(false); // Reset opacity Lapisan Atas ke 0 untuk transisi selanjutnya
-            }, transitionDuration); 
-            
-        }, displayDuration + transitionDuration); // Total siklus = 5 detik
-
-        // Logika Navbar Scroll
-        const handleScroll = () => {
-            if (typeof window !== 'undefined') {
-                const currentScrollY = window.scrollY;
-
-                // Navbar Hide/Show
-                if (currentScrollY > 100 && currentScrollY > lastScrollY) {
-                    setIsScrolled(true); // Sembunyikan
-                } else if (currentScrollY < lastScrollY || currentScrollY < 100) {
-                    setIsScrolled(false); // Tampilkan
-                }
-
-                setLastScrollY(currentScrollY);
-            }
-        };
-
-        if (typeof window !== 'undefined') {
-            window.addEventListener('scroll', handleScroll);
-        }
-
-        return () => {
-            clearInterval(heroInterval);
-            if (typeof window !== 'undefined') {
-                window.removeEventListener('scroll', handleScroll);
-            }
-        };
-    }, [oldImageIndex, nextImageIndex, images.length]); // Dependencies memastikan logika berjalan lancar
-
-
-  const heroImage: string = images[currentImageIndex]
+  // Render loading state
+  if (isLoading) {
+    return <LoadingSkeleton />;
+  }
 
   return (
     <>
@@ -177,38 +138,57 @@ export default function HomePage() {
       <section id="hero-section" className="relative h-[80vh] min-h-[500px] flex items-center justify-center overflow-hidden">
         {/* Gambar Latar Belakang (Transisi Cross-Fade MULUS) */}
         <div className="absolute inset-0">
-          {/* Gambar Lama (Lapisan Bawah, selalu opacity 1, ini memastikan layar tidak gelap) */}
-          <img
-            src={images[oldImageIndex]}
-            alt="Hotel View Old"
-            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
-          />
-          {/* Gambar Baru (Lapisan Atas, transisi opacity 0 -> 1) */}
-          <img
-            src={images[nextImageIndex]}
-            alt="Hotel View New"
-            // Ketika isFading=TRUE, opacity=1 (fading in). Ketika isFading=FALSE, opacity=0 (invisible, ready for next transition)
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${isFading ? 'opacity-100' : 'opacity-0'}`}
-          />
+          {/* Gambar Utama - Menggunakan Next.js Image */}
+          <div className="absolute inset-0">
+            <Image
+              key={currentImageIndex}
+              src={images[currentImageIndex]}
+              alt={`Hotel View ${currentImageIndex + 1}`}
+              fill
+              priority
+              quality={90}
+              sizes="100vw"
+              className={`object-cover transition-opacity duration-200 ${isFading ? 'opacity-0' : 'opacity-100'
+                }`}
+              style={{ objectFit: 'cover' }}
+            />
+          </div>
+
           {/* Overlay Hitam untuk Keterbacaan Teks */}
-          <div className="absolute inset-0 bg-black opacity-50"></div>
+          <div className="absolute inset-0 bg-black/50" />
         </div>
 
         {/* Konten Hero */}
-        <div className="relative z-10 text-center px-6">
-          <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-4 drop-shadow-lg">
-            {hotelData?.name || "Hotel Hebat"}
+        <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
+          <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-4 drop-shadow-lg animate-fade-in">
+            {hotelData?.name || 'Hotel Hebat'}
           </h1>
-          <p className="text-xl md:text-2xl text-white mb-10 drop-shadow-md font-medium">
-            {hotelData?.description || "Kenyamanan dan Kemewahan di Jantung Kota"}
+          <p className="text-xl md:text-2xl text-white mb-10 drop-shadow-md font-medium animate-fade-in-delay">
+            {hotelData?.description || 'Kenyamanan dan Kemewahan di Jantung Kota'}
           </p>
 
-          {/* Search Form component */}
-
-          {/* <SearchForm isScrolled={isScrolled} /> */}
-
-
+          {/* Optional: Indikator Slide */}
+          <div className="flex justify-center gap-2 mt-8">
+            {images.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setIsFading(true);
+                  setTimeout(() => {
+                    setCurrentImageIndex(index);
+                    setIsFading(false);
+                  }, 1000);
+                }}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentImageIndex
+                  ? 'bg-white w-8'
+                  : 'bg-white/50 hover:bg-white/75'
+                  }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
         </div>
+
       </section>
 
       {/* Search Form */}
@@ -223,7 +203,7 @@ export default function HomePage() {
         <div className="container mx-auto">
           <h2 className="text-4xl font-extrabold text-teal-700 mb-12 text-center">Pilihan Tipe Kamar Kami</h2>
 
-          {roomTypeData.map((room:any, index:any) => (
+          {roomTypeData.map((room: any, index: any) => (
             <RoomCard
               key={room.id}
               id={room.id}

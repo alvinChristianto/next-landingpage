@@ -13,7 +13,10 @@ export default function Header() {
     return (
         <header className="fixed top-0 left-0 w-full z-50 bg-white bg-opacity-80 backdrop-blur-sm shadow-md py-4 px-6 md:px-12">
             <nav className="container mx-auto flex justify-between items-center">
-                <Link href="/" className="text-xl md:text-2xl font-bold text-teal-700 hover:text-teal-800 transition-colors">
+                <Link href="/" className="flex flex-row gap-2 text-xl md:text-2xl font-bold text-teal-700 hover:text-teal-800 transition-colors">
+                    <div className="hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-teal-700 text-white shadow-md flex-shrink-0">
+                        <div className="w-5 h-5 fill-current"> ""</div>
+                    </div>
                     Hotel Jaya Abadi
                 </Link>
 
@@ -64,7 +67,7 @@ export default function Header() {
                             Tentang Kami
                         </Link>
                         <a href="/#room-types" className="block text-gray-600" onClick={() => setMobileMenuOpen(false)}>Pilihan Kamar</a>
-                         <a href="/#features" className="block text-gray-600" onClick={() => setMobileMenuOpen(false)}>Fitur</a>
+                        <a href="/#features" className="block text-gray-600" onClick={() => setMobileMenuOpen(false)}>Fitur</a>
                         <Link
                             href="/contact"
                             className={`block transition-colors ${isActive('/contact') ? 'text-teal-700 font-semibold' : 'text-gray-600'}`}
